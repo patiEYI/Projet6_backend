@@ -1,7 +1,17 @@
 const express = require('express');
+const  rateLimit  =  require ( "express-rate-limit" ) ;
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+
+//limiteur de connection
+const  limiteur  =  rateLimit ( { 
+  windowMs : 15 * 60 * 1000 ,  // 15 minutes 
+  max : 10,// limite chaque IP à 100 requêtes par windowMs 
+  message :
+  " veuillez réessayer après 15min" 
+}) ; 
+
 
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
@@ -21,6 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(limiteur);
 app.use(bodyParser.json());
 
 
