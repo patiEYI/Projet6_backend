@@ -1,35 +1,16 @@
-
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-
-// Validation email
-let validEmail = (email) => {
-  if (!email) {
-    return false; 
-  } else {
-    // Regex
-    const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return regex.test(email); 
-  }
-};
-
-
-const userSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({ //model utilisateur
   email: { 
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
-    validate:  validEmail
-      
+    lowercase: true,   
   },
   password: { 
     type: String,
-    required: true,
-    minlength: 7,
-    trim: true,
-    
+    required: true,  
   }
 });
 

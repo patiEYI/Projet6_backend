@@ -1,18 +1,32 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-//regex mot de passe
-const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,15})$/;
 
-exports.signup = (req, res, next) => {//création d'un nouveau user
-  if  ( !regex.test(req.body.password)) {
-    return res.status(400).json({ error: 'Certains caractères ne sont pas autorisés'});
+//regex 
+//mot de passe
+//un maj, un chiffre, un caractère spécial, min:8, max:15
+const regexPassword = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,15})$/;
+const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+//methode masquage email
+const maskData = require("maskdata");
+const emailMaskOptions = { 
+  maskWith: "*",
+  unmaskedStartCharactersBeforeAt: 2,
+  unmaskedEndCharactersAfterAt: 1,
+  maskAtTheRate: false,
+};
+
+//création d'un nouveau utilisateur
+exports.signup = (req, res, next) => { 
+  if  ( !regexPassword.test(req.body.password) && !regexEmail.test(req.body.email) ) {
+    return res.status(400).json({ error: 'Format email ou mot de passe invalid'});
   }
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
 
       const user = new User({
-        email: req.body.email ,
+        email: maskData.maskEmail2(req.body.email, emailMaskOptions),
         password: hash
     });
   
@@ -23,8 +37,9 @@ exports.signup = (req, res, next) => {//création d'un nouveau user
     .catch(error => res.status(500).json({ error }));
 };
 
-exports.login = (req, res, next) => {//connection d'un user
-  User.findOne({ email: req.body.email })
+//connexion  user
+exports.login = (req, res, next) => { 
+  User.findOne({ email: maskData.maskEmail2(req.body.email, emailMaskOptions)})
   .then(user => {
     if (!user) {
       return res.status(401).json({ error: 'Utilisateur non trouvé !' });

@@ -1,8 +1,8 @@
 const Sauce = require('../models/sauce');
 const fs = require('fs');
 
-
-const regex = /^[^$'=+@()&{}"#\-_)](.|\n|\r|\n\r){3,50}$/;
+//regex exclut $'=+@()&{}"#\-_
+const regex = /^[^$'=+@()&{}"#\-_)](.|\n|\r|\n|\r\w){3,50}$/;
 
 //récupération de toutes les sauces
 exports.getAllSauce = (req, res, next) => {
@@ -19,9 +19,9 @@ exports.createSauce = (req, res, next) => {
     
     //regex
     if  ( !regex.test(sauceObject.name) || 
-    !regex.test(sauceObject.manufactured) || 
-    !regex.test(sauceObject.description) ||
-     !regex.test(sauceObject.mainPepper)) {  
+      !regex.test(sauceObject.manufactured) || 
+      !regex.test(sauceObject.description) ||
+      !regex.test(sauceObject.mainPepper)) {  
          
         return res.status(400).json({ error: 'Certains caractères ne sont pas autorisés'});
     }  
