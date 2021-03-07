@@ -1,5 +1,4 @@
 const express = require('express');
-const  rateLimit  =  require ( "express-rate-limit" ) ;
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -10,7 +9,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 
 //connection à la base de donnée mongoDB
-mongoose.connect('mongodb+srv://newUser:queen@cluster0.vzvya.mongodb.net/<dbname>?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://Admin:pass@cluster0.vzvya.mongodb.net/<dbname>?retryWrites=true&w=majority',
   {useNewUrlParser: true,
   useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussi !'))
